@@ -1,3 +1,6 @@
+from rest_framework.authtoken.models import Token
+from dj_rest_auth.views import LoginView
+from django.contrib.auth import login
 from rest_framework import viewsets
 from .serializers import *
 from .models import *
@@ -102,4 +105,16 @@ class TwitterInfo_View(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# I plan to do text analysis with Python and potentially build machine learning algorithms based on Twitter Data. I am interested in doing
+class CustomAuthToken(LoginView):
+    """ for dj-rest-auth we have return user id with token """
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk
+        })

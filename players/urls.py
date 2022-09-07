@@ -69,6 +69,6 @@ urlpatterns = [
     path('offer/<int:pk>/', offers_detail, name='offer_detail'),
     path('team/', team_list, name='team_list'),
     path('team/<int:pk>/', team_detail, name='team_detail'),
-    path('dj-rest-auth/login/', include(('dj_rest_auth.urls', 'players'), namespace='login')),
+    path('login/', CustomAuthToken.as_view(), name='login_user'),
     path('dj-rest-auth/logout/', include('dj_rest_auth.urls')),
 ]

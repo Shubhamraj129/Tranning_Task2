@@ -14,15 +14,15 @@ class Command(BaseCommand):
         auth.set_access_token(access_token, access_secret)
         api = tweepy.API(auth)  # , wait_on_rate_limit=True,
         api.verify_credentials()
-        for x in TwitterInfo.objects.values('username')[4:]:
+        for x in TwitterInfo.objects.values('username')[:4]:
             frist_name = x.get('username')
             print(frist_name)
             try:
                 user = api.get_user(screen_name=frist_name)
                 tweets_count = user.statuses_count
                 print(tweets_count)
-                name = user.name
-                print(name)
+                profile_name = user.name
+                print(profile_name)
                 location = user.location
                 print(location)
                 following = user.friends_count
@@ -35,9 +35,11 @@ class Command(BaseCommand):
                 global retweet
                 for pages in tweepy.Cursor(api.user_timeline, screen_name=frist_name, count=200).items(1):
                     retweet = pages.retweet_count
-                TwitterInfo.objects.filter(username=frist_name).update(tweets_count=tweets_count, followers_count=followers,
+                TwitterInfo.objects.filter(username=frist_name).update(tweets_count=tweets_count,
+                                                                       followers_count=followers,
                                                                        following_count=following, last_tweet=last_tweet,
-                                                                       retweets_count=retweet, profile_name=name,
+                                                                       retweets_count=retweet,
+                                                                       profile_name=profile_name,
                                                                        location=location)
-            except :
+            except:
                 print("  ")
